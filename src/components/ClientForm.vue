@@ -1,179 +1,171 @@
 <template>
-  <div v-if="formActive">
-    <form @submit.prevent="submitHandler">
-      <div class="title">Основная информация</div>
-      <div class="form-content">
-        <div class="row-main">
-          <span class="label">Фамилия*</span>
-          <input
-            v-model.trim="lastname"
-            @input="setLastName($event.target.value)"
-          />
-          <div class="invalid-feedback">
-            <span v-if="!$v.lastname.required"
-              >Это поле должно быть заполнено!</span
-            >
-          </div>
-        </div>
-        <div class="row-main">
-          <span class="label">Имя*</span>
-          <input
-            v-model.trim="firstname"
-            @input="setFirstName($event.target.value)"
-          />
-          <div class="invalid-feedback">
-            <span v-if="!$v.firstname.required"
-              >Это поле должно быть заполнено!</span
-            >
-          </div>
-        </div>
-        <div class="row-main">
-          <span class="label">Отчество</span>
-          <input />
-        </div>
-        <div class="row-main">
-          <span class="label">Дата рождения*</span>
-          <input
-            v-model.trim="dateOfBirthday"
-            @input="setDate($event.target.value)"
-          />
-          <span v-if="!$v.dateOfBirthday.required"
-            >Это поле должно быть заполнено!</span
-          >
-          <span v-if="!$v.dateOfBirthday.date">Шаблон DD/MM/YYYY/!</span>
-        </div>
-        <div class="row-main">
-          <span class="label">Номер телефона*</span>
-          <input
-            v-model.trim="phoneNumber"
-            @input="setPhoneNumber($event.target.value)"
-          />
-          <span v-if="!$v.phoneNumber.phone">11 цифр начиная с +7</span>
-          <span v-if="!$v.phoneNumber.required"
+  <form @submit.prevent="submitHandler">
+    <div class="title">Основная информация</div>
+    <div class="form-content">
+      <div class="row-main">
+        <span class="label">Фамилия*</span>
+        <input
+          v-model.trim="lastname"
+          @input="setLastName($event.target.value)"
+        />
+        <div class="invalid-feedback">
+          <span v-if="!$v.lastname.required"
             >Это поле должно быть заполнено!</span
           >
         </div>
-        <div class="row-main">
-          <span class="label">Пол</span>
-          <select class="select_gender" style="" name="Gender">
-            <option value="Мужской" selected>Мужской</option>
-            <option value="Женский">Женский</option>
-          </select>
-        </div>
-        <div class="row-main">
-          <span class="label">Группа клиентов*</span>
-          <select
-            class="select_client-group"
-            name="ClentGroup"
-            @change="onChangeGroup($event)"
-          >
-            <option value="ОМС" selected>ОМС</option>
-            <option value="VIP">VIP</option>
-            <option value="Проблемные">Проблемные</option>
-          </select>
-          <div class="multiselect">
-            <span v-for="item in currentGroup" :key="item">{{ item }}</span>
-          </div>
-          <span v-if="!currentGroup.length"
-            >Здесь должна быть хотя бы 1 категория!</span
-          >
-        </div>
-        <div class="row-main">
-          <span class="label">Лечащий врач</span>
-          <select class="select_doctor" name="Doctors">
-            <option value="Иванов" selected>Иванов</option>
-            <option value="Захаров">Захаров</option>
-            <option value="Чернышева">Чернышева</option>
-          </select>
-        </div>
-        <div class="row-main">
-          <span class="label">Не отправлять СМС</span>
-          <input class="input_checkbox" type="checkbox" />
-        </div>
       </div>
-      <div class="title">Адрес</div>
-      <div class="form-content">
-        <div class="row-address">
-          <span class="label">Индекс</span>
-          <input />
-        </div>
-        <div class="row-address">
-          <span class="label">Страна</span>
-          <input />
-        </div>
-        <div class="row-address">
-          <span class="label">Область</span>
-          <input />
-        </div>
-        <div class="row-address">
-          <span class="label">Город*</span>
-          <input v-model.trim="city" @input="setCity($event.target.value)" />
-          <span v-if="!$v.city.required">Это поле должно быть заполнено!</span>
-        </div>
-        <div class="row-address">
-          <span class="label">Улица</span>
-          <input />
-        </div>
-        <div class="row-address">
-          <span class="label">Дом</span>
-          <input />
-        </div>
-      </div>
-      <div class="title">Паспорт</div>
-      <div class="form-content">
-        <div class="row-passport">
-          <span class="label">Тип документа*</span>
-          <select
-            class="select_doc"
-            name="ClientDoc"
-            v-model.trim="doc"
-            @input="setDoc($event.target.value)"
-          >
-            <option value="Паспорт" selected>Паспорт</option>
-            <option value="Свидетельство о рождении">
-              Свидетельство о рождении
-            </option>
-            <option value="Вод. удостоверение">Вод. удостоверение</option>
-          </select>
-          <span v-if="!$v.doc.required">Это поле должно быть заполнено!</span>
-        </div>
-        <div class="row-passport">
-          <span class="label">Серия</span>
-          <input />
-        </div>
-        <div class="row-passport">
-          <span class="label">Номер</span>
-          <input />
-        </div>
-        <div class="row-passport">
-          <span class="label">Кем выдан</span>
-          <input />
-        </div>
-        <div class="row-passport">
-          <span class="label">Дата выдачи*</span>
-          <input
-            v-model.trim="dateOfGettedDoc"
-            @input="setDocDate($event.target.value)"
-          />
-          <span v-if="!$v.dateOfGettedDoc.required"
+      <div class="row-main">
+        <span class="label">Имя*</span>
+        <input
+          v-model.trim="firstname"
+          @input="setFirstName($event.target.value)"
+        />
+        <div class="invalid-feedback">
+          <span v-if="!$v.firstname.required"
             >Это поле должно быть заполнено!</span
           >
-          <span v-if="!$v.dateOfGettedDoc.date">Шаблон DD/MM/YYYY/!</span>
         </div>
       </div>
-      <button type="submit" @click="submitHandler">ДАЛЕЕ</button>
-    </form>
-  </div>
-  <div v-else>Успех!</div>
+      <div class="row-main">
+        <span class="label">Отчество</span>
+        <input />
+      </div>
+      <div class="row-main">
+        <span class="label">Дата рождения*</span>
+        <input
+          v-model.trim="dateOfBirthday"
+          @input="setDate($event.target.value)"
+        />
+        <span v-if="!$v.dateOfBirthday.required"
+          >Это поле должно быть заполнено!</span
+        >
+        <span v-if="!$v.dateOfBirthday.date">Шаблон DD/MM/YYYY/!</span>
+      </div>
+      <div class="row-main">
+        <span class="label">Номер телефона*</span>
+        <input
+          v-model.trim="phoneNumber"
+          @input="setPhoneNumber($event.target.value)"
+        />
+        <span v-if="!$v.phoneNumber.phone">11 цифр начиная с +7</span>
+        <span v-if="!$v.phoneNumber.required"
+          >Это поле должно быть заполнено!</span
+        >
+      </div>
+      <div class="row-main">
+        <span class="label">Пол</span>
+        <select class="select_gender" style="" name="Gender">
+          <option value="Мужской" selected>Мужской</option>
+          <option value="Женский">Женский</option>
+        </select>
+      </div>
+      <div class="row-main">
+        <span class="label">Группа клиентов*</span>
+        <select
+          class="select_client-group"
+          name="ClentGroup"
+          @change="onChangeGroup($event)"
+        >
+          <option value="ОМС" selected>ОМС</option>
+          <option value="VIP">VIP</option>
+          <option value="Проблемные">Проблемные</option>
+        </select>
+        <div class="multiselect">
+          <span v-for="item in currentGroup" :key="item">{{ item }}</span>
+        </div>
+        <span v-if="!currentGroup.length"
+          >Здесь должна быть хотя бы 1 категория!</span
+        >
+      </div>
+      <div class="row-main">
+        <span class="label">Лечащий врач</span>
+        <select class="select_doctor" name="Doctors">
+          <option value="Иванов" selected>Иванов</option>
+          <option value="Захаров">Захаров</option>
+          <option value="Чернышева">Чернышева</option>
+        </select>
+      </div>
+      <div class="row-main">
+        <span class="label">Не отправлять СМС</span>
+        <input class="input_checkbox" type="checkbox" />
+      </div>
+    </div>
+    <div class="title">Адрес</div>
+    <div class="form-content">
+      <div class="row-address">
+        <span class="label">Индекс</span>
+        <input />
+      </div>
+      <div class="row-address">
+        <span class="label">Страна</span>
+        <input />
+      </div>
+      <div class="row-address">
+        <span class="label">Область</span>
+        <input />
+      </div>
+      <div class="row-address">
+        <span class="label">Город*</span>
+        <input v-model.trim="city" @input="setCity($event.target.value)" />
+        <span v-if="!$v.city.required">Это поле должно быть заполнено!</span>
+      </div>
+      <div class="row-address">
+        <span class="label">Улица</span>
+        <input />
+      </div>
+      <div class="row-address">
+        <span class="label">Дом</span>
+        <input />
+      </div>
+    </div>
+    <div class="title">Паспорт</div>
+    <div class="form-content">
+      <div class="row-passport">
+        <span class="label">Тип документа*</span>
+        <select
+          class="select_doc"
+          name="ClientDoc"
+          v-model.trim="doc"
+          @input="setDoc($event.target.value)"
+        >
+          <option value="Паспорт" selected>Паспорт</option>
+          <option value="Свидетельство о рождении">
+            Свидетельство о рождении
+          </option>
+          <option value="Вод. удостоверение">Вод. удостоверение</option>
+        </select>
+        <span v-if="!$v.doc.required">Это поле должно быть заполнено!</span>
+      </div>
+      <div class="row-passport">
+        <span class="label">Серия</span>
+        <input />
+      </div>
+      <div class="row-passport">
+        <span class="label">Номер</span>
+        <input />
+      </div>
+      <div class="row-passport">
+        <span class="label">Кем выдан</span>
+        <input />
+      </div>
+      <div class="row-passport">
+        <span class="label">Дата выдачи*</span>
+        <input
+          v-model.trim="dateOfGettedDoc"
+          @input="setDocDate($event.target.value)"
+        />
+        <span v-if="!$v.dateOfGettedDoc.required"
+          >Это поле должно быть заполнено!</span
+        >
+        <span v-if="!$v.dateOfGettedDoc.date">Шаблон DD/MM/YYYY/!</span>
+      </div>
+    </div>
+    <button type="submit" @click="submitHandler">ДАЛЕЕ</button>
+  </form>
 </template>
 
 <script>
-import {
-  required,
-  minLength,
-  numeric,
-  helpers,
-} from "vuelidate/lib/validators";
+import { required, minLength, helpers } from "vuelidate/lib/validators";
 const regexpPhone = /\+7\d\d\d\d\d\d\d\d\d\d/;
 const phone = (value) => helpers.req(value.trim().match(regexpPhone));
 const regexpDate =
@@ -186,7 +178,6 @@ export default {
   components: {},
   data: function () {
     return {
-      formActive: true,
       currentGroup: [],
       firstname: "",
       lastname: "",
@@ -201,7 +192,7 @@ export default {
     firstname: { required },
     lastname: { required },
     dateOfBirthday: { required, date },
-    phoneNumber: { required, minLength: minLength(11), numeric, phone },
+    phoneNumber: { required, minLength: minLength(11), phone },
     currentGroup: { required, selectCategory },
     city: { required },
     doc: { required },
@@ -237,12 +228,24 @@ export default {
       this.$v.dateOfGettedDoc.$touch();
     },
     submitHandler() {
-      console.log(this);
+      console.log(this.$v);
+      if (
+        this.currentGroup.length &&
+        this.$v.dateOfGettedDoc.date &&
+        this.$v.dateOfGettedDoc.required &&
+        this.$v.dateOfBirthday.date &&
+        this.$v.dateOfBirthday.required &&
+        this.$v.phoneNumber.phone &&
+        this.$v.phoneNumber.required &&
+        this.$v.doc.required &&
+        this.$v.firstname.required &&
+        this.$v.lastname.required &&
+        this.$v.city.required
+      ) {
+        alert("Новый клиет успешно создан!");
+      }
       if (this.$v.$invalid) {
         this.$v.$touch();
-        if (this.$v.$touch()) {
-          this.formActive = false;
-        }
         return;
       }
     },
