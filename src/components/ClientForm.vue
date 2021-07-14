@@ -48,6 +48,9 @@
             <option value="VIP">VIP</option>
             <option value="Проблемные">Проблемные</option>
           </select>
+          <div class="multiselect">
+            <span v-for="item in currentGroup" :key="item">{{ item }}</span>
+          </div>
         </div>
         <div class="row-main">
           <span class="label">Лечащий врач</span>
@@ -133,6 +136,7 @@ export default {
   data: function () {
     return {
       formActive: true,
+      currentGroup: [],
       firstname: "",
       lastname: "",
       patronim: "",
@@ -150,7 +154,15 @@ export default {
       // this.formActive = false;
     },
     onChangeGroup(event) {
-      console.log(event.target.value);
+      !this.currentGroup.find((el) => el === event.target.value)
+        ? this.currentGroup.push(event.target.value)
+        : this.currentGroup.splice(
+            this.currentGroup.indexOf(
+              this.currentGroup.find((el) => el === event.target.value)
+            ),
+            1
+          );
+      return;
     },
   },
   validations: {
@@ -184,6 +196,7 @@ form {
   }
   .input_checkbox {
     width: auto;
+    margin-right: 12px;
   }
 
   .row {
@@ -194,6 +207,17 @@ form {
       height: 55px;
     }
     &-main {
+      .multiselect {
+        height: 21px;
+        display: flex;
+        justify-content: space-evenly;
+        margin-top: 12px;
+        span {
+          border: 1px #0000007a solid;
+          border-radius: 5px;
+          padding: 3px;
+        }
+      }
       .select_ {
         &gender,
         &client-group,
@@ -209,6 +233,8 @@ form {
         width: 50%;
         display: flex;
         justify-content: space-between;
+        float: inline-start;
+        margin-left: 50%;
       }
     }
     &-passport {
@@ -269,6 +295,7 @@ form {
       &-main:last-child {
         width: 90%;
         justify-content: space-between;
+        margin-left: 0;
       }
     }
 
