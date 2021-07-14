@@ -161,7 +161,7 @@
           <span v-if="!$v.dateOfGettedDoc.date">Шаблон DD/MM/YYYY/!</span>
         </div>
       </div>
-      <button type="submit">ДАЛЕЕ</button>
+      <button type="submit" @click="submitHandler">ДАЛЕЕ</button>
     </form>
   </div>
   <div v-else>Успех!</div>
@@ -174,8 +174,8 @@ import {
   numeric,
   helpers,
 } from "vuelidate/lib/validators";
-const regexpPhone = /\+7dddddddddd /;
-const phone = (value) => helpers.req(value.match(regexpPhone));
+const regexpPhone = /\+7\d\d\d\d\d\d\d\d\d\d/;
+const phone = (value) => helpers.req(value.trim().match(regexpPhone));
 const regexpDate =
   /(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d/;
 const date = (value) => helpers.req(value.match(regexpDate));
@@ -190,7 +190,6 @@ export default {
       currentGroup: [],
       firstname: "",
       lastname: "",
-      patronim: "",
       dateOfBirthday: "",
       phoneNumber: "",
       city: "",
@@ -222,8 +221,8 @@ export default {
       this.$v.dateOfBirthday.$touch();
     },
     setPhoneNumber(value) {
-      this.phone = value;
-      this.$v.phone.$touch();
+      this.phoneNumber = value;
+      this.$v.phoneNumber.$touch();
     },
     setCity(value) {
       this.city = value;
@@ -238,12 +237,14 @@ export default {
       this.$v.dateOfGettedDoc.$touch();
     },
     submitHandler() {
+      console.log(this);
       if (this.$v.$invalid) {
         this.$v.$touch();
+        if (this.$v.$touch()) {
+          this.formActive = false;
+        }
         return;
       }
-      this.currentGroup.length != 0;
-      // this.formActive = false;
     },
     onChangeGroup(event) {
       !this.currentGroup.find((el) => el === event.target.value)
