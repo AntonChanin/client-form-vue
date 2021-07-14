@@ -6,17 +6,26 @@
         <div class="row-main">
           <span class="label">Фамилия*</span>
           <input
-            v-modal.trim="firstname"
-            :class="{
-              invalid:
-                ($v.firstname.$dirty && !$v.firstname.required) ||
-                ($v.firstname.$dirty && $v.firstname.firstname),
-            }"
+            v-model.trim="lastname"
+            @input="setLastName($event.target.value)"
           />
+          <div class="invalid-feedback">
+            <span v-if="!$v.lastname.required"
+              >Это поле должно быть заполнено!</span
+            >
+          </div>
         </div>
         <div class="row-main">
           <span class="label">Имя*</span>
-          <input />
+          <input
+            v-model.trim="firstname"
+            @input="setFirstName($event.target.value)"
+          />
+          <div class="invalid-feedback">
+            <span v-if="!$v.firstname.required"
+              >Это поле должно быть заполнено!</span
+            >
+          </div>
         </div>
         <div class="row-main">
           <span class="label">Отчество</span>
@@ -24,11 +33,25 @@
         </div>
         <div class="row-main">
           <span class="label">Дата рождения*</span>
-          <input />
+          <input
+            v-model.trim="dateOfBirthday"
+            @input="setDate($event.target.value)"
+          />
+          <span v-if="!$v.dateOfBirthday.required"
+            >Это поле должно быть заполнено!</span
+          >
+          <span v-if="!$v.dateOfBirthday.date">Шаблон DD/MM/YYYY/!</span>
         </div>
         <div class="row-main">
           <span class="label">Номер телефона*</span>
-          <input />
+          <input
+            v-model.trim="phoneNumber"
+            @input="setPhoneNumber($event.target.value)"
+          />
+          <span v-if="!$v.phoneNumber.phone">11 цифр начиная с +7</span>
+          <span v-if="!$v.phoneNumber.required"
+            >Это поле должно быть заполнено!</span
+          >
         </div>
         <div class="row-main">
           <span class="label">Пол</span>
@@ -51,6 +74,9 @@
           <div class="multiselect">
             <span v-for="item in currentGroup" :key="item">{{ item }}</span>
           </div>
+          <span v-if="!currentGroup.length"
+            >Здесь должна быть хотя бы 1 категория!</span
+          >
         </div>
         <div class="row-main">
           <span class="label">Лечащий врач</span>
@@ -81,7 +107,8 @@
         </div>
         <div class="row-address">
           <span class="label">Город*</span>
-          <input />
+          <input v-model.trim="city" @input="setCity($event.target.value)" />
+          <span v-if="!$v.city.required">Это поле должно быть заполнено!</span>
         </div>
         <div class="row-address">
           <span class="label">Улица</span>
@@ -96,13 +123,19 @@
       <div class="form-content">
         <div class="row-passport">
           <span class="label">Тип документа*</span>
-          <select class="select_doc" name="ClientDoc">
+          <select
+            class="select_doc"
+            name="ClientDoc"
+            v-model.trim="doc"
+            @input="setDoc($event.target.value)"
+          >
             <option value="Паспорт" selected>Паспорт</option>
             <option value="Свидетельство о рождении">
               Свидетельство о рождении
             </option>
             <option value="Вод. удостоверение">Вод. удостоверение</option>
           </select>
+          <span v-if="!$v.doc.required">Это поле должно быть заполнено!</span>
         </div>
         <div class="row-passport">
           <span class="label">Серия</span>
@@ -118,7 +151,14 @@
         </div>
         <div class="row-passport">
           <span class="label">Дата выдачи*</span>
-          <input />
+          <input
+            v-model.trim="dateOfGettedDoc"
+            @input="setDocDate($event.target.value)"
+          />
+          <span v-if="!$v.dateOfGettedDoc.required"
+            >Это поле должно быть заполнено!</span
+          >
+          <span v-if="!$v.dateOfGettedDoc.date">Шаблон DD/MM/YYYY/!</span>
         </div>
       </div>
       <button type="submit">ДАЛЕЕ</button>
@@ -128,7 +168,18 @@
 </template>
 
 <script>
-import { required, minLength, numeric } from "vuelidate/lib/validators";
+import {
+  required,
+  minLength,
+  numeric,
+  helpers,
+} from "vuelidate/lib/validators";
+const regexpPhone = /\+7dddddddddd /;
+const phone = (value) => helpers.req(value.match(regexpPhone));
+const regexpDate =
+  /(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d/;
+const date = (value) => helpers.req(value.match(regexpDate));
+const selectCategory = (value) => helpers.req(value.length > 0);
 
 export default {
   name: "ClientForm",
@@ -141,16 +192,57 @@ export default {
       lastname: "",
       patronim: "",
       dateOfBirthday: "",
-      phone: "",
+      phoneNumber: "",
+      city: "",
+      doc: "",
+      dateOfGettedDoc: "",
     };
   },
+  validations: {
+    firstname: { required },
+    lastname: { required },
+    dateOfBirthday: { required, date },
+    phoneNumber: { required, minLength: minLength(11), numeric, phone },
+    currentGroup: { required, selectCategory },
+    city: { required },
+    doc: { required },
+    dateOfGettedDoc: { required, date },
+  },
   methods: {
+    setFirstName(value) {
+      this.firstname = value;
+      this.$v.firstname.$touch();
+    },
+    setLastName(value) {
+      this.lastname = value;
+      this.$v.lastname.$touch();
+    },
+    setDate(value) {
+      this.dateOfBirthday = value;
+      this.$v.dateOfBirthday.$touch();
+    },
+    setPhoneNumber(value) {
+      this.phone = value;
+      this.$v.phone.$touch();
+    },
+    setCity(value) {
+      this.city = value;
+      this.$v.city.$touch();
+    },
+    setDoc(value) {
+      this.doc = value;
+      this.$v.doc.$touch();
+    },
+    setDocDate(value) {
+      this.dateOfGettedDoc = value;
+      this.$v.dateOfGettedDoc.$touch();
+    },
     submitHandler() {
-      if (this.$v.$inyalid) {
+      if (this.$v.$invalid) {
         this.$v.$touch();
-        console.log(this.$v.$inyalid);
         return;
       }
+      this.currentGroup.length != 0;
       // this.formActive = false;
     },
     onChangeGroup(event) {
@@ -164,13 +256,6 @@ export default {
           );
       return;
     },
-  },
-  validations: {
-    firstname: { required },
-    lastname: { required },
-    patronim: {},
-    dateOfBirthday: { required },
-    phone: { required, minLength: minLength(11), numeric },
   },
 };
 </script>
