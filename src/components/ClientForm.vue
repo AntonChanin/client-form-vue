@@ -1,29 +1,121 @@
 <template>
-  <div v-if="form.formActive">
+  <div v-if="formActive">
     <form @submit.prevent="submitHandler">
       <div class="title">Основная информация</div>
       <div class="form-content">
-        <div v-for="item in form.info" :key="item.label" class="row-main">
-          <span class="label">{{ item.label }}</span>
-          <div v-html="item.content"></div>
+        <div class="row-main">
+          <span class="label">Фамилия*</span>
+          <input
+            v-modal.trim="firstname"
+            :class="{
+              invalid:
+                ($v.firstname.$dirty && !$v.firstname.required) ||
+                ($v.firstname.$dirty && $v.firstname.firstname),
+            }"
+          />
+        </div>
+        <div class="row-main">
+          <span class="label">Имя*</span>
+          <input />
+        </div>
+        <div class="row-main">
+          <span class="label">Отчество</span>
+          <input />
+        </div>
+        <div class="row-main">
+          <span class="label">Дата рождения*</span>
+          <input />
+        </div>
+        <div class="row-main">
+          <span class="label">Номер телефона*</span>
+          <input />
+        </div>
+        <div class="row-main">
+          <span class="label">Пол</span>
+          <select class="select_gender" style="" name="Gender">
+            <option value="Мужской" selected>Мужской</option>
+            <option value="Женский">Женский</option>
+          </select>
+        </div>
+        <div class="row-main">
+          <span class="label">Группа клиентов*</span>
+          <select
+            class="select_client-group"
+            name="ClentGroup"
+            @change="onChangeGroup($event)"
+          >
+            <option value="ОМС" selected>ОМС</option>
+            <option value="VIP">VIP</option>
+            <option value="Проблемные">Проблемные</option>
+          </select>
+        </div>
+        <div class="row-main">
+          <span class="label">Лечащий врач</span>
+          <select class="select_doctor" name="Doctors">
+            <option value="Иванов" selected>Иванов</option>
+            <option value="Захаров">Захаров</option>
+            <option value="Чернышева">Чернышева</option>
+          </select>
+        </div>
+        <div class="row-main">
+          <span class="label">Не отправлять СМС</span>
+          <input class="input_checkbox" type="checkbox" />
         </div>
       </div>
       <div class="title">Адрес</div>
       <div class="form-content">
-        <div v-for="item in form.address" :key="item.label" class="row-address">
-          <span class="label">{{ item.label }}</span>
-          <div v-html="item.content"></div>
+        <div class="row-address">
+          <span class="label">Индекс</span>
+          <input />
+        </div>
+        <div class="row-address">
+          <span class="label">Страна</span>
+          <input />
+        </div>
+        <div class="row-address">
+          <span class="label">Область</span>
+          <input />
+        </div>
+        <div class="row-address">
+          <span class="label">Город*</span>
+          <input />
+        </div>
+        <div class="row-address">
+          <span class="label">Улица</span>
+          <input />
+        </div>
+        <div class="row-address">
+          <span class="label">Дом</span>
+          <input />
         </div>
       </div>
       <div class="title">Паспорт</div>
       <div class="form-content">
-        <div
-          v-for="item in form.passport"
-          :key="item.label"
-          class="row-passport"
-        >
-          <span class="label">{{ item.label }}</span>
-          <div v-html="item.content"></div>
+        <div class="row-passport">
+          <span class="label">Тип документа*</span>
+          <select class="select_doc" name="ClientDoc">
+            <option value="Паспорт" selected>Паспорт</option>
+            <option value="Свидетельство о рождении">
+              Свидетельство о рождении
+            </option>
+            <option value="Вод. удостоверение">Вод. удостоверение</option>
+          </select>
+        </div>
+        <div class="row-passport">
+          <span class="label">Серия</span>
+          <input />
+        </div>
+        <div class="row-passport">
+          <span class="label">Номер</span>
+          <input />
+        </div>
+        <div class="row-passport">
+          <span class="label">Кем выдан</span>
+          <input />
+        </div>
+        <div class="row-passport">
+          <span class="label">Дата выдачи*</span>
+          <input />
         </div>
       </div>
       <button type="submit">ДАЛЕЕ</button>
@@ -33,126 +125,40 @@
 </template>
 
 <script>
+import { required, minLength, numeric } from "vuelidate/lib/validators";
+
 export default {
   name: "ClientForm",
   components: {},
   data: function () {
     return {
-      form: {
-        info: [
-          {
-            label: "Фамилия*",
-            content: `<input style="border: 0; border-bottom: 1px #0000007a solid; width: 90%; font-size: 20px;" />`,
-          },
-          {
-            label: "Имя*",
-            content: `<input style="border: 0; border-bottom: 1px #0000007a solid; width: 90%; font-size: 20px;" />`,
-          },
-          {
-            label: "Отчество",
-            content: `<input style="border: 0; border-bottom: 1px #0000007a solid; width: 90%; font-size: 20px;" />`,
-          },
-          {
-            label: "Дата рождения*",
-            content: `<input style="border: 0; border-bottom: 1px #0000007a solid; width: 90%; font-size: 20px;" />`,
-          },
-          {
-            label: "Номер телефона*",
-            content: `<input style="border: 0; border-bottom: 1px #0000007a solid; width: 90%; font-size: 20px;" />`,
-          },
-          {
-            label: "Пол",
-            content: `
-<select style="height: 21px; border: 0; border-bottom: 1px #0000007a solid; width: 90%; font-size: 20px;" name = "Pol" >
-<option value = "Мужской" selected>Мужской</option>
-<option value = "Женский">Женский</option>
-</select>`,
-          },
-          {
-            label: "Группа клиентов*",
-            content: `
-<select style=" width: 90%; height: 21px; border: 0; border-bottom: 1px #0000007a solid; font-size: 20px;" name = "ClentGroup" >
-<option value = "ОМС" selected>ОМС</option>
-<option value = "VIP">VIP</option>
-<option value = "Проблемные">Проблемные</option>
-</select>`,
-          },
-          {
-            label: "Лечащий врач",
-            content: `
-<select style=" width: 90%; height: 21px; border: 0; border-bottom: 1px #0000007a solid; font-size: 20px;" name = "Doctors" >
-<option value = "Иванов" selected>Иванов</option>
-<option value = "Захаров">Захаров</option>
-<option value = "Чернышева">Чернышева</option>
-</select>`,
-          },
-          { label: "Не отправлять СМС", content: "<input type=checkbox />" },
-        ],
-        address: [
-          {
-            label: "Индекс",
-            content: `<input style="border: 0; border-bottom: 1px #0000007a solid; width: 90%; font-size: 20px;" />`,
-          },
-          {
-            label: "Страна",
-            content: `<input style="border: 0; border-bottom: 1px #0000007a solid; width: 90%; font-size: 20px;" />`,
-          },
-          {
-            label: "Область",
-            content: `<input style="border: 0; border-bottom: 1px #0000007a solid; width: 90%; font-size: 20px;" />`,
-          },
-          {
-            label: "Город*",
-            content: `<input style="border: 0; border-bottom: 1px #0000007a solid; width: 90%; font-size: 20px;" />`,
-          },
-          {
-            label: "Улица",
-            content: `<input style="border: 0; border-bottom: 1px #0000007a solid; width: 90%; font-size: 20px;" />`,
-          },
-          {
-            label: "Дом",
-            content: `<input style="border: 0; border-bottom: 1px #0000007a solid; width: 90%; font-size: 20px;" />`,
-          },
-        ],
-        passport: [
-          {
-            label: "Тип документа*",
-            content: `
-<select style=" width: 90%; height: 21px; border: 0; border-bottom: 1px #0000007a solid; font-size: 20px;" class="select" name = "ClentGroup" >
-<option value = "Паспорт" selected>Паспорт</option>
-<option value = "Свидетельство о рождении">Свидетельство о рождении</option>
-<option value = "Вод. удостоверение">Вод. удостоверение</option>
-</select>`,
-          },
-          {
-            label: "Серия",
-            content: `<input style="border: 0; border-bottom: 1px #0000007a solid; width: 90%; font-size: 20px;" />`,
-          },
-          {
-            label: "Номер",
-            content: `<input style="border: 0; border-bottom: 1px
-IIS Windows Server
-IIS Windows Server
-form.info
-#0000007a solid; width: 90%; font-size: 20px;" />`,
-          },
-          {
-            label: "Кем выдан",
-            content: `<input style="border: 0; border-bottom: 1px #0000007a solid; width: 90%; font-size: 20px;" />`,
-          },
-          {
-            label: "Дата выдачи*",
-            content: `<input style="border: 0; border-bottom: 1px #0000007a solid; width: 90%; font-size: 20px;" />`,
-          },
-        ],
-        formActive: true,
-      },
+      formActive: true,
+      firstname: "",
+      lastname: "",
+      patronim: "",
+      dateOfBirthday: "",
+      phone: "",
     };
   },
   methods: {
     submitHandler() {
-      this.form.formActive = false;
+      if (this.$v.$inyalid) {
+        this.$v.$touch();
+        console.log(this.$v.$inyalid);
+        return;
+      }
+      // this.formActive = false;
     },
+    onChangeGroup(event) {
+      console.log(event.target.value);
+    },
+  },
+  validations: {
+    firstname: { required },
+    lastname: { required },
+    patronim: {},
+    dateOfBirthday: { required },
+    phone: { required, minLength: minLength(11), numeric },
   },
 };
 </script>
@@ -169,6 +175,17 @@ form {
   padding: 20px 0;
   margin: auto;
 
+  input {
+    border: 0;
+    border-bottom: 1px #0000007a solid;
+    width: 90%;
+    font-size: 20px;
+    height: 21px;
+  }
+  .input_checkbox {
+    width: auto;
+  }
+
   .row {
     &-main,
     &-address,
@@ -176,10 +193,32 @@ form {
       width: 50%;
       height: 55px;
     }
-    &-main:last-child {
-      width: 100%;
-      display: flex;
-      margin: 5px 0px 0px 12px;
+    &-main {
+      .select_ {
+        &gender,
+        &client-group,
+        &doctor {
+          height: 21px;
+          border: 0;
+          border-bottom: 1px #0000007a solid;
+          width: 90%;
+          font-size: 20px;
+        }
+      }
+      &:last-child {
+        width: 50%;
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+    &-passport {
+      .select_doc {
+        height: 21px;
+        border: 0;
+        border-bottom: 1px #0000007a solid;
+        width: 90%;
+        font-size: 20px;
+      }
     }
   }
 
