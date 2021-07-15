@@ -328,7 +328,7 @@ form {
     &-main {
       .multiselect {
         height: 21px;
-        width: 243px;
+        max-width: 243px;
         display: flex;
         justify-content: flex-start;
         flex-wrap: wrap;
