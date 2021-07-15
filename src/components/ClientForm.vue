@@ -1,60 +1,68 @@
 <template>
-  <form @submit.prevent="submitHandler">
+  <form @submit.prevent="submitHandler" id="reg">
     <div class="title">Основная информация</div>
     <div class="form-content">
       <div class="row-main">
         <span class="label">Фамилия*</span>
         <input
+          form="reg"
           v-model.trim="lastname"
           @input="setLastName($event.target.value)"
         />
         <div class="invalid-feedback">
-          <span v-if="!$v.lastname.required"
-            >Это поле должно быть заполнено!</span
-          >
+          <span v-if="!$v.lastname.required && show">
+            Это поле должно быть заполнено!
+          </span>
         </div>
       </div>
       <div class="row-main">
         <span class="label">Имя*</span>
         <input
+          form="reg"
           v-model.trim="firstname"
           @input="setFirstName($event.target.value)"
         />
         <div class="invalid-feedback">
-          <span v-if="!$v.firstname.required"
-            >Это поле должно быть заполнено!</span
-          >
+          <span v-if="!$v.firstname.required && show">
+            Это поле должно быть заполнено!
+          </span>
         </div>
       </div>
       <div class="row-main">
         <span class="label">Отчество</span>
-        <input />
+        <input form="reg" />
       </div>
       <div class="row-main">
         <span class="label">Дата рождения*</span>
         <input
+          form="reg"
           v-model.trim="dateOfBirthday"
           @input="setDate($event.target.value)"
         />
-        <span v-if="!$v.dateOfBirthday.required"
-          >Это поле должно быть заполнено!</span
-        >
-        <span v-if="!$v.dateOfBirthday.date">Шаблон DD/MM/YYYY/!</span>
+        <span v-if="!$v.dateOfBirthday.required && show">
+          Это поле должно быть заполнено!
+        </span>
+        <span v-if="!$v.dateOfBirthday.date && dateOfBirthday !== ''">
+          Шаблон: DD/MM/YYYY
+        </span>
       </div>
       <div class="row-main">
         <span class="label">Номер телефона*</span>
         <input
+          form="reg"
           v-model.trim="phoneNumber"
           @input="setPhoneNumber($event.target.value)"
         />
-        <span v-if="!$v.phoneNumber.phone">11 цифр начиная с +7</span>
-        <span v-if="!$v.phoneNumber.required"
-          >Это поле должно быть заполнено!</span
-        >
+        <span v-if="!$v.phoneNumber.required && show">
+          Это поле должно быть заполнено!
+        </span>
+        <span v-if="!$v.phoneNumber.phone && phoneNumber !== ''">
+          Шаблон: +7dddddddddd
+        </span>
       </div>
       <div class="row-main">
         <span class="label">Пол</span>
-        <select class="select_gender" style="" name="Gender">
+        <select form="reg" class="select_gender" style="" name="Gender">
           <option value="Мужской" selected>Мужской</option>
           <option value="Женский">Женский</option>
         </select>
@@ -62,6 +70,7 @@
       <div class="row-main">
         <span class="label">Группа клиентов*</span>
         <select
+          form="reg"
           class="select_client-group"
           name="ClentGroup"
           @change="onChangeGroup($event)"
@@ -70,16 +79,19 @@
           <option value="VIP">VIP</option>
           <option value="Проблемные">Проблемные</option>
         </select>
-        <div class="multiselect">
-          <span v-for="item in currentGroup" :key="item">{{ item }}</span>
+        <div class="multiselect" v-if="currentGroup.length">
+          <span class="current-group" v-for="item in currentGroup" :key="item">
+            {{ item }}
+            <button class="current-group_btn" @click="remove(item)">x</button>
+          </span>
         </div>
-        <span v-if="!currentGroup.length"
+        <span v-if="!currentGroup.length && show"
           >Здесь должна быть хотя бы 1 категория!</span
         >
       </div>
       <div class="row-main">
         <span class="label">Лечащий врач</span>
-        <select class="select_doctor" name="Doctors">
+        <select form="reg" class="select_doctor" name="Doctors">
           <option value="Иванов" selected>Иванов</option>
           <option value="Захаров">Захаров</option>
           <option value="Чернышева">Чернышева</option>
@@ -87,18 +99,18 @@
       </div>
       <div class="row-main">
         <span class="label">Не отправлять СМС</span>
-        <input class="input_checkbox" type="checkbox" />
+        <input form="reg" class="input_checkbox" type="checkbox" />
       </div>
     </div>
     <div class="title">Адрес</div>
     <div class="form-content">
       <div class="row-address">
         <span class="label">Индекс</span>
-        <input />
+        <input form="reg" />
       </div>
       <div class="row-address">
         <span class="label">Страна</span>
-        <input />
+        <input form="reg" />
       </div>
       <div class="row-address">
         <span class="label">Область</span>
@@ -106,16 +118,22 @@
       </div>
       <div class="row-address">
         <span class="label">Город*</span>
-        <input v-model.trim="city" @input="setCity($event.target.value)" />
-        <span v-if="!$v.city.required">Это поле должно быть заполнено!</span>
+        <input
+          form="reg"
+          v-model.trim="city"
+          @input="setCity($event.target.value)"
+        />
+        <span v-if="!$v.city.required && show">
+          Это поле должно быть заполнено!
+        </span>
       </div>
       <div class="row-address">
         <span class="label">Улица</span>
-        <input />
+        <input form="reg" />
       </div>
       <div class="row-address">
         <span class="label">Дом</span>
-        <input />
+        <input form="reg" />
       </div>
     </div>
     <div class="title">Паспорт</div>
@@ -123,6 +141,7 @@
       <div class="row-passport">
         <span class="label">Тип документа*</span>
         <select
+          form="reg"
           class="select_doc"
           name="ClientDoc"
           v-model.trim="doc"
@@ -134,30 +153,35 @@
           </option>
           <option value="Вод. удостоверение">Вод. удостоверение</option>
         </select>
-        <span v-if="!$v.doc.required">Это поле должно быть заполнено!</span>
+        <span v-if="!$v.doc.required && show"
+          >Это поле должно быть заполнено!</span
+        >
       </div>
       <div class="row-passport">
         <span class="label">Серия</span>
-        <input />
+        <input form="reg" />
       </div>
       <div class="row-passport">
         <span class="label">Номер</span>
-        <input />
+        <input form="reg" />
       </div>
       <div class="row-passport">
         <span class="label">Кем выдан</span>
-        <input />
+        <input form="reg" />
       </div>
       <div class="row-passport">
         <span class="label">Дата выдачи*</span>
         <input
+          form="reg"
           v-model.trim="dateOfGettedDoc"
           @input="setDocDate($event.target.value)"
         />
-        <span v-if="!$v.dateOfGettedDoc.required"
-          >Это поле должно быть заполнено!</span
-        >
-        <span v-if="!$v.dateOfGettedDoc.date">Шаблон DD/MM/YYYY/!</span>
+        <span v-if="!$v.dateOfGettedDoc.required && show">
+          Это поле должно быть заполнено!
+        </span>
+        <span v-if="!$v.dateOfGettedDoc.date && dateOfGettedDoc !== ''">
+          Шаблон: DD/MM/YYYY
+        </span>
       </div>
     </div>
     <button type="submit" @click="submitHandler">ДАЛЕЕ</button>
@@ -186,6 +210,7 @@ export default {
       city: "",
       doc: "",
       dateOfGettedDoc: "",
+      show: false,
     };
   },
   validations: {
@@ -227,8 +252,10 @@ export default {
       this.dateOfGettedDoc = value;
       this.$v.dateOfGettedDoc.$touch();
     },
+    remove(value) {
+      this.currentGroup.splice(this.currentGroup.indexOf(value), 1);
+    },
     submitHandler() {
-      console.log(this.$v);
       if (
         this.currentGroup.length &&
         this.$v.dateOfGettedDoc.date &&
@@ -243,6 +270,9 @@ export default {
         this.$v.city.required
       ) {
         alert("Новый клиет успешно создан!");
+      } else {
+        this.show = true;
+        setTimeout(() => (this.show = false), 2500);
       }
       if (this.$v.$invalid) {
         this.$v.$touch();
@@ -298,13 +328,16 @@ form {
     &-main {
       .multiselect {
         height: 21px;
+        width: 243px;
         display: flex;
-        justify-content: space-evenly;
+        justify-content: flex-start;
+        flex-wrap: wrap;
         margin-top: 12px;
         span {
           border: 1px #0000007a solid;
           border-radius: 5px;
           padding: 3px;
+          margin-left: 12px;
         }
       }
       .select_ {
@@ -359,6 +392,16 @@ form {
     height: 30px;
     display: block;
     margin: 12px 0 0 12px;
+  }
+  .current-group {
+    display: flex;
+    height: 19px;
+    &_btn {
+      width: 28px;
+      width: 20px;
+      height: 20px;
+      margin: 0 2px;
+    }
   }
 
   .label {
