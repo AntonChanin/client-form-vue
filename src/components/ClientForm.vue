@@ -326,9 +326,6 @@ form {
       width: 50%;
       height: 55px;
       margin: 0 0 15px 0;
-      &_sms {
-        height: 21px;
-      }
     }
     &-main {
       .multiselect {
