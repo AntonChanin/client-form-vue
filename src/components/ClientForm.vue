@@ -97,7 +97,7 @@
           <option value="Чернышева">Чернышева</option>
         </select>
       </div>
-      <div class="row-main">
+      <div class="row-main row-main_sms">
         <span class="label">Не отправлять СМС</span>
         <input form="reg" class="input_checkbox" type="checkbox" />
       </div>
@@ -303,7 +303,7 @@ form {
   -moz-box-shadow: 0px 0px 4px 0px rgba(34, 60, 80, 0.2);
   box-shadow: 0px 0px 4px 0px rgba(34, 60, 80, 0.2);
   width: 540px;
-  padding: 20px 0;
+  padding: 40px 20px 20px 20px;
   margin: auto;
 
   input {
@@ -311,11 +311,12 @@ form {
     border-bottom: 1px #0000007a solid;
     width: 90%;
     font-size: 20px;
-    height: 21px;
+    height: 30px;
   }
   .input_checkbox {
     width: auto;
     margin-right: 12px;
+    height: 12px;
   }
 
   .row {
@@ -324,10 +325,14 @@ form {
     &-passport {
       width: 50%;
       height: 55px;
+      margin: 0 0 15px 0;
+      &_sms {
+        height: 21px;
+      }
     }
     &-main {
       .multiselect {
-        height: 21px;
+        height: 30px;
         max-width: 243px;
         display: flex;
         justify-content: flex-start;
@@ -344,7 +349,7 @@ form {
         &gender,
         &client-group,
         &doctor {
-          height: 21px;
+          height: 33px;
           border: 0;
           border-bottom: 1px #0000007a solid;
           width: 90%;
@@ -357,11 +362,15 @@ form {
         justify-content: space-between;
         float: inline-start;
         margin-left: 50%;
+        margin-top: 10px;
+      }
+      &_sms:last-child {
+        margin-top: 0;
       }
     }
     &-passport {
       .select_doc {
-        height: 21px;
+        height: 33px;
         border: 0;
         border-bottom: 1px #0000007a solid;
         width: 90%;
@@ -380,7 +389,7 @@ form {
 
   .title {
     font-size: 28px;
-    padding: 20px 10px 10px 10px;
+    padding: 0 0 10px 0;
   }
 
   button {
