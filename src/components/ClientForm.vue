@@ -339,7 +339,7 @@ form {
           border: 1px #0000007a solid;
           border-radius: 5px;
           padding: 3px;
-          margin-left: 12px;
+          margin: 0 0 4px 12px;
         }
       }
       .select_ {
